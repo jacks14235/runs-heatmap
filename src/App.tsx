@@ -1,41 +1,42 @@
-import GoogleMapReact from 'google-map-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from "react";
+import { getToken } from "./logic/strava-requests";
 
-type LatLng = { lat: number, lng: number };
+
 
 function App() {
-  const ll = (lat: number, lng: number) => ({ lat, lng });
-  const [points, setPoints] = useState<LatLng[]>([]);
+
   useEffect(() => {
-    setPoints([
-      ll(37.782, -122.447),
-      ll(37.782, -122.445),
-      ll(37.782, -122.443),
-      ll(37.782, -122.441),
-      ll(37.782, -122.439),
-      ll(37.782, -122.437),
-      ll(37.782, -122.435),
-      ll(37.785, -122.447),
-      ll(37.785, -122.445),
-      ll(37.785, -122.443),
-      ll(37.785, -122.441),
-      ll(37.785, -122.439),
-      ll(37.785, -122.437),
-      ll(37.785, -122.435)
-    ])
-  }, []);
+    const url = window.location.href;
+    console.log(url)
+    const map = getQueries(url);
+    console.log(map);
+    if (map.get('code') && map.get('scope')) {
+      syncStravaData(map.get('code')!);
+    }
+
+  }, [])
+
+  function syncStravaData(code: string) {
+    getToken(code).then(token => console.log(token));
+  }
 
   return (
-    <div className="">
-      <GoogleMapReact
-        bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_KEY || '' }}
-        defaultCenter={ll(37.782, -122.435)}
-        defaultZoom={11}
-        heatmapLibrary={true}
-        heatmap={{positions: points, options: {radius: 20, opacity: .6}}}
-        ></GoogleMapReact>
+    <div style={{width: '60%', height: '60%'}}>
+      <a href={`https://www.strava.com/oauth/authorize?client_id=${process.env.REACT_APP_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=http://localhost:3000&approval_prompt=force&scope=read`}>
+        <button>Connect with Strava</button>
+      </a>
+        
     </div>
   );
+}
+
+function getQueries(url: string): Map<string, string> {
+  const map = new Map<string, string>();
+  url.substring(url.indexOf('?')).split('&').forEach(query => {
+    const eq = query.indexOf('=');
+    map.set(query.substring(0, eq), query.substring(eq + 1));
+  });
+  return map;
 }
 
 export default App;
