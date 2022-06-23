@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { getToken } from "./logic/strava-requests";
+import { getActivities, getToken } from "./logic/strava-requests";
 
 
 
@@ -22,10 +22,10 @@ function App() {
 
   return (
     <div style={{width: '60%', height: '60%'}}>
-      <a href={`https://www.strava.com/oauth/authorize?client_id=${process.env.REACT_APP_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=http://localhost:3000&approval_prompt=force&scope=read`}>
+      <a href={`https://www.strava.com/oauth/authorize?client_id=${process.env.REACT_APP_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=http://localhost:3000&approval_prompt=force&scope=read,read_all,profile:read_all,activity:read,activity:read_all`}>
         <button>Connect with Strava</button>
       </a>
-        
+      <button onClick={getActivities}>Get Activities</button>
     </div>
   );
 }
