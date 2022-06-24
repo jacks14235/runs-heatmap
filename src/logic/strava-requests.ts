@@ -1,5 +1,3 @@
-import { rejects } from "assert";
-import { resolve } from "path";
 
 export function getToken(code: string) {
   return new Promise<string>((resolve, reject) => {
@@ -37,11 +35,11 @@ function retrieveToken() {
   })
 }
 
-export function getActivities() {
+export function getActivities(page: number) {
   return new Promise<any>(async (resolve, reject) => {
     const token = await retrieveToken();
     const athleteId = JSON.parse(localStorage.getItem('athlete') || '{}').id;
-    fetch(`https://www.strava.com/api/v3/athletes/${athleteId}/routes`, {
+    fetch(`https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=100`, {
       headers: {
         authorization: `Bearer ${token}`
       }
@@ -49,5 +47,9 @@ export function getActivities() {
     .then(res => res.json())
     .then(data => console.log(data))
   })
-
 }
+
+export function getGPX(id: string) {
+    
+}
+
